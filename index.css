@@ -19,3 +19,7 @@ a {
 a:hover {
   color: #788646;
 }
+
+dt {
+  font-weight: bold;
+}
