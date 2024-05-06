@@ -22,13 +22,17 @@ a:hover {
 }
 
 .header-logo {
-  margin-bottom: 2rem;
+  width: 12rem;
+  padding-bottom: 12rem;
+  position: relative;
+  margin: 0 auto 2rem;
 }
 
 .header-logo__img {
-  margin: 0 auto;
   display: block;
-  max-width: 200px;
+  position: absolute;
+  z-index: 0;
+  width: 100%;
 }
 
 nav {
