@@ -1,16 +1,27 @@
+:root {
+  --colour-white: #ffffff;
+  --colour-off-white: #f5f5f5;
+}
+
 html {
   font-size: 16px;
   line-height: 1.5;
   font-family: Georgia, "Times New Roman", Times, serif;
   color: #252422;
-  background-color: #f5f5f5;
+  background-color: var(--colour-off-white);
   scroll-behavior: smooth;
 }
 
 body {
-  margin: 2rem auto;
+  /* margin: 1rem auto; */
   padding: 0 2rem;
   max-width: 620px;
+}
+
+@media screen and (min-width: 670px) {
+  body {
+    margin: 2rem auto;
+  }
 }
 
 a {
@@ -47,20 +58,20 @@ nav {
   flex-direction: column;
 }
 
-@media screen and (min-width: 580px) {
+@media screen and (min-width: 670px) {
   .navigation {
     flex-direction: row;
     gap: 1rem;
   }
 
   .navigation-main {
-    justify-content: center;
+    justify-content: space-between;
   }
 }
 
 .button,
 .navigation-main__link {
-  color: #f5f5f5;
+  color: var(--colour-off-white);
   text-decoration: none;
   padding: 0.5rem 1rem;
   background-color: #252422;
@@ -70,7 +81,7 @@ nav {
 .button:hover,
 .navigation-main__link:hover {
   color: #252422;
-  background-color: white;
+  background-color: var(--colour-white);
   border-color: #252422;
 }
 
@@ -78,7 +89,7 @@ nav {
 .navigation-main__link--active:hover {
   background-color: #545e31;
   border-color: transparent;
-  color: #f5f5f5;
+  color: var(--colour-off-white);
 }
 
 .button {
@@ -96,7 +107,7 @@ nav {
 .expanded-background {
   margin-left: -2rem;
   margin-right: -2rem;
-  background-color: white;
+  background-color: var(--colour-white);
   padding: 0.5rem 2rem 1rem;
 }
 
@@ -114,4 +125,51 @@ h2 {
 
 h3 {
   margin-top: 2rem;
+}
+
+/* ------- Card ------- */
+
+.card-list {
+  display: grid;
+  gap: 1rem;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+@media screen and (min-width: 670px) {
+  .card-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--colour-white);
+}
+
+.card__image {
+  display: block;
+  width: 100%;
+}
+
+.card__description {
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+.card__description p:last-child {
+  margin-bottom: 0;
+}
+
+.card__title {
+  margin-top: 0;
+  font-size: inherit;
+}
+
+/* ------- Event page ------- */
+
+.featured-image-wrap,
+.featured-image {
+  width: 100%;
 }
