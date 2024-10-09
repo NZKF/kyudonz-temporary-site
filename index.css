@@ -1,13 +1,20 @@
 :root {
   --colour-white: #ffffff;
   --colour-off-white: #f5f5f5;
+
+  --colour-black: #252422;
+
+  --spacing-xsmall: 4px; /* 4px */
+  --spacing-small: 8px; /* 8px */
+  --spacing-main: 16px; /* 16px */
+  --spacing-large: 24px; /* 24px */
 }
 
 html {
   font-size: 16px;
   line-height: 1.5;
   font-family: Georgia, "Times New Roman", Times, serif;
-  color: #252422;
+  color: var(--colour-black);
   background-color: var(--colour-off-white);
   scroll-behavior: smooth;
 }
@@ -74,15 +81,15 @@ nav {
   color: var(--colour-off-white);
   text-decoration: none;
   padding: 0.5rem 1rem;
-  background-color: #252422;
+  background-color: var(--colour-black);
   border: 2px solid transparent;
 }
 
 .button:hover,
 .navigation-main__link:hover {
-  color: #252422;
+  color: var(--colour-black);
   background-color: var(--colour-white);
-  border-color: #252422;
+  border-color: var(--colour-black);
 }
 
 .navigation-main__link--active,
@@ -165,6 +172,79 @@ h3 {
 .card__title {
   margin-top: 0;
   font-size: inherit;
+}
+
+/* -------------- Tables -------------- */
+
+caption {
+  text-align: left;
+}
+
+td:not(:empty),
+th:not(:empty) {
+  text-align: start;
+  vertical-align: top;
+  padding: var(--spacing-small) var(--spacing-main);
+}
+
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+table thead {
+  background-color: var(--colour-black);
+  color: var(--colour-white);
+}
+
+/* tbody tr:nth-child(odd) {
+  background: var(--colour-grey);
+} */
+
+tbody tr:nth-child(even) {
+  background: var(--colour-white);
+}
+
+@media screen and (max-width: 719px) {
+  table tr {
+    display: grid;
+  }
+
+  table td {
+    padding-top: var(--spacing-small);
+    padding-bottom: var(--spacing-small);
+    margin-bottom: 0;
+  }
+
+  table td:first-child {
+    font-weight: var(--font-weight-bold);
+    margin-bottom: 0;
+  }
+
+  table thead {
+    display: none;
+  }
+
+  .schedule-table td:empty {
+    display: none;
+  }
+
+  .schedule-table td:first-child {
+    color: var(--colour-white);
+    background-color: var(--colour-black);
+  }
+}
+
+@media screen and (min-width: 720px) {
+  .schedule-table {
+    margin-left: -2rem;
+    margin-right: -2rem;
+  }
+
+  .schedule-table caption {
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
 }
 
 /* ------- Event page ------- */
