@@ -13,10 +13,11 @@
   --font-size-large: 1.8rem; /* 34px */
   --font-size-xlarge: 2.4rem; /* 36px */
 
-  --spacing-xsmall: 4px; /* 4px */
-  --spacing-small: 8px; /* 8px */
-  --spacing-main: 16px; /* 16px */
-  --spacing-large: 24px; /* 24px */
+  --spacing-xsmall: 0.25rem; /* 4px */
+  --spacing-small: 0.5rem; /* 8px */
+  --spacing: 1rem; /* 16px */
+  --spacing-large: 1.5rem; /* 24px */
+  --spacing-xlarge: 2rem; /* 32px */
 }
 
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap");
