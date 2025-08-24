@@ -26,7 +26,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 
 html {
-  font-size: 16px;
   line-height: 1.5;
   font-family: "Roboto", sans-serif;
   color: var(--colour-black);
@@ -39,6 +38,7 @@ body {
   /* margin: 1rem auto; */
   padding: 0 2rem;
   max-width: 640px;
+  font-size: var(--font-size);
 }
 
 @media screen and (min-width: 680px) {
