@@ -37,11 +37,11 @@ html {
 body {
   /* margin: 1rem auto; */
   padding: 0 2rem;
-  max-width: 640px;
+  max-width: 48rem;
   font-size: var(--font-size);
 }
 
-@media screen and (min-width: 680px) {
+@media screen and (min-width: 44rem) {
   body {
     margin: 2rem auto;
   }
@@ -71,6 +71,7 @@ a:hover {
 
 nav {
   margin-bottom: 2rem;
+  container-type: inline-size;
 }
 
 .navigation {
@@ -81,7 +82,7 @@ nav {
   flex-direction: column;
 }
 
-@media screen and (min-width: 680px) {
+@container (min-width: 44rem) {
   .navigation {
     flex-direction: row;
     gap: 0.75rem;
@@ -162,7 +163,7 @@ h3 {
   padding-left: 0;
 }
 
-@media screen and (min-width: 680px) {
+@media screen and (min-width: 44rem) {
   .card-list {
     grid-template-columns: 1fr 1fr;
   }
