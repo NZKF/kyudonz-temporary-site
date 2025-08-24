@@ -13,6 +13,9 @@
   --font-size-large: 1.8rem; /* 34px */
   --font-size-xlarge: 2.4rem; /* 36px */
 
+  --line-height-heading: 1.2;
+  --line-height: 1.5;
+
   --spacing-xsmall: 0.25rem; /* 4px */
   --spacing-small: 0.5rem; /* 8px */
   --spacing: 1rem; /* 16px */
