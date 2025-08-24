@@ -8,7 +8,7 @@
   --font-weight-bold: 700;
 
   --font-size-small: 1rem; /* 16px */
-  --font-size: 1.25rem; /* 20px */
+  --font-size: 1.125rem; /* 20px */
   --font-size-medium: 1.4rem; /* 22px */
   --font-size-large: 2.1rem; /* 34px */
   --font-size-xlarge: 2.8rem; /* 44px */
@@ -257,6 +257,10 @@ tbody tr:nth-child(odd) {
     color: var(--colour-white);
     background-color: var(--colour-black);
   }
+}
+
+h2 + .schedule-table h3 {
+  margin-top: 0;
 }
 
 /* ------- Event page ------- */
