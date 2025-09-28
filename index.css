@@ -222,6 +222,14 @@ th:not(:empty) {
   padding: var(--spacing-small) var(--spacing);
 }
 
+td p:first-child {
+  margin-top: 0;
+}
+
+td p:last-child {
+  margin-bottom: 0;
+}
+
 table {
   border-spacing: 0;
   border-collapse: collapse;
@@ -231,10 +239,6 @@ table thead {
   background-color: var(--colour-black);
   color: var(--colour-white);
 }
-
-/* tbody tr:nth-child(odd) {
-  background: var(--colour-grey);
-} */
 
 tbody tr:nth-child(even) {
   background: var(--colour-white);
