@@ -19,16 +19,38 @@ The system SHALL authenticate users by emailing a single-use, time-limited login
 - **WHEN** a user clicks a login link that has expired or was already used
 - **THEN** the system refuses the login and offers to send a fresh link
 
-### Requirement: Long-lived sessions
-The system SHALL keep an authenticated session valid for approximately one year so that infrequent users (typically 3–4 logins per year) rarely need to re-authenticate.
+### Requirement: Session lifetime tiered by blast radius
+The system SHALL keep club-committee sessions valid for approximately one year so that infrequent users (typically 3–4 logins per year) rarely need to re-authenticate. NZKF-committee sessions — which carry federation-wide access to all member PII and every page — SHALL expire substantially sooner (approximately 30 days), so the higher-blast-radius accounts re-authenticate far more often. Where a person holds both roles, the shorter (NZKF) lifetime SHALL govern their session.
 
-#### Scenario: Returning within the session window
-- **WHEN** an authenticated user returns before their session expires
+#### Scenario: Club committee returns within the session window
+- **WHEN** an authenticated club-committee user returns before their ~1-year session expires
 - **THEN** the system recognises them without requiring a new login link
+
+#### Scenario: NZKF committee session expires sooner
+- **WHEN** an NZKF-committee user's session passes its ~30-day lifetime
+- **THEN** the system requires a fresh magic-link login before granting access, even though a club-only account would still be valid
 
 #### Scenario: Session expiry
 - **WHEN** a user's session has passed its lifetime
 - **THEN** the system requires a fresh magic-link login before granting access to protected areas
+
+### Requirement: Session integrity and revocation
+Session cookies SHALL be marked HttpOnly, Secure, and SameSite, and the session identifier SHALL be rotated on login. The system SHALL keep server-side session state so that a session can be revoked, and SHALL revoke a user's active sessions when their committee role is removed.
+
+#### Scenario: Losing a role kills active sessions
+- **WHEN** an administrator removes a person's committee role
+- **THEN** that person's existing sessions no longer grant the removed access, without waiting for the session to expire
+
+### Requirement: Region-restricted application access
+Where the host supports source-IP geolocation, the editing application (login and all committee/admin surfaces) SHOULD reject requests originating outside New Zealand, Australia, and Japan, with an administrator override for a locked-out user. This restriction SHALL apply only to the application; it SHALL NOT apply to the public static site, which SHALL remain reachable worldwide.
+
+#### Scenario: Login attempt from an unexpected region
+- **WHEN** a request to the editing application originates from outside NZ/AU/JP and the host supports geolocation
+- **THEN** the system rejects it, while the public static site continues to load from anywhere
+
+#### Scenario: Public site stays global
+- **WHEN** a visitor anywhere in the world requests a public page
+- **THEN** the static site is served normally, unaffected by the application's region restriction
 
 ### Requirement: Email is the account identity
 The system SHALL treat the email address as the account identity. A user SHALL be able to change their own account email, and the change SHALL take effect for subsequent logins.

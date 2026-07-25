@@ -35,7 +35,19 @@
 - [ ] 6.2 Set up the nightly member-data dump to a private repository
 - [ ] 6.3 Verify member data never reaches the public repo and the public render path cannot read the members table
 
-## 7. Go-live & handover
+## 7. Security hardening (threaded from the threat model)
 
-- [ ] 7.1 Update the admin guide with member management, marking financial, cessation, and register export
-- [ ] 7.2 Retire the Google Sheet as system of record after a full December cycle or committee sign-off
+- [ ] 7.1 Route all member reads/writes through the single server-side authorization choke-point; enforce scope + field-level visibility per request (IDOR), not in the UI
+- [ ] 7.2 Enforce field-level visibility in the query/server layer (name/email/club to all committee; full record to own-club + NZKF)
+- [ ] 7.3 Member writes accept only an allow-list of fields per role (mass assignment); block out-of-scope club reassignment and consent-flag forgery; CSRF on state-changing requests
+- [ ] 7.4 Record cessation as an attributable event (actor + reason category + date) before reducing the record
+- [ ] 7.5 Log sensitive member actions (mark-financial, cessation, register export) with actor + time, without duplicating personal fields into the log
+- [ ] 7.6 Register export streamed as an authenticated download; never written to the docroot or any unauthorized-reachable path
+- [ ] 7.7 Encrypt the nightly dump (age/gpg) and keep it on-host; do NOT commit it to any git repository (Area B — avoids undeletable history and purge-defeat)
+- [ ] 7.8 Verify the public render path has no access to the members table and no member data reaches the public repo/site
+- [ ] 7.9 Run the cessation-reduction and 7-year purge in dry-run/log mode before enabling live deletion
+
+## 8. Go-live & handover
+
+- [ ] 8.1 Update the admin guide with member management, marking financial, cessation, and register export
+- [ ] 8.2 Retire the Google Sheet as system of record after a full December cycle or committee sign-off

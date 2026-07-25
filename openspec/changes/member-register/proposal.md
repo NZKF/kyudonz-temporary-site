@@ -15,7 +15,7 @@ This change (**Phase 1b**) migrates the register into the platform built by [con
 - **Statutory retention**: on cessation the record is reduced to **name + cessation date** (contact and grades removed); former-member records are purged once more than seven years past the cessation date. Implemented as an automated cron job.
 - **Consent capture**: the constitution requires retaining each member's signed written consent to join — recorded as a stored reference/flag per member.
 - **Self-serve register export**: the NZKF secretary or treasurer can produce the current register plus the seven-year former-member trailing record, without developer involvement — satisfying the "produce on request" duty.
-- **Data isolation and archival**: member data lives in MySQL with a nightly dump to a **private** repository; it is never written to the public content repo and the public render path has no access to it.
+- **Data isolation and archival**: member data lives in MySQL with a nightly **encrypted, on-host** dump (not committed to any git repository — see threat-model Area B); it is never written to the public content repo and the public render path has no access to it.
 
 ## Capabilities
 
@@ -29,7 +29,7 @@ This change (**Phase 1b**) migrates the register into the platform built by [con
 ## Impact
 
 - **Depends on**: [content-editing-and-hosting](../content-editing-and-hosting/proposal.md) (Phase 1a) being live — auth, roles, MySQL, hosting, deliverability.
-- **New systems**: member tables in the existing MySQL database; a cron job (cessation reduction + 7-year purge); a nightly private-repo dump; a register-export feature.
+- **New systems**: member tables in the existing MySQL database; a cron job (cessation reduction + 7-year purge); a nightly encrypted on-host dump; a register-export feature.
 - **Data**: Google Sheet migrated and retired as system of record; the Sheet kept read-only as fallback until sign-off.
 - **Legal**: statutory Register of Members, former-member record, 7-year retention, consent retention, and produce-on-request now sit in this system.
 - **Out of scope**: member self-editing, age-band self-reporting, members-only resources page, per-member payment-confirmation emails — all Phase 2 ([member-self-service](../member-self-service/proposal.md)).

@@ -46,7 +46,7 @@ The register is governed by NZKF's constitution (Incorporated Societies Act 2022
 
 ### D5 — Self-serve register export
 - A button lets the NZKF secretary/treasurer download the **current statutory register** plus the **7-year former-member trailing record**, with admin fields available as a separate/optional export.
-- **Why:** satisfies "held at the registered office, produced on request" and removes Prae/SSH as the access path — the successor requirement. The nightly private dump is a backup of this, not the access route.
+- **Why:** satisfies "held at the registered office, produced on request" and removes Prae/SSH as the access path — the successor requirement. The nightly encrypted on-host dump (D7) is a backup of this, not the access route.
 
 ### D6 — Field-level visibility enforced by the system
 - `name + email + club` → all committee (matches the existing announcements Google Group).
@@ -54,10 +54,11 @@ The register is governed by NZKF's constitution (Incorporated Societies Act 2022
 - The NZKF treasurer, for reconciliation, needs only name + club + financial status; broader personal fields are visible to NZKF committee generally but not required for the treasurer's task.
 - **Why:** the system enforces privacy independent of trust; least privilege applied where it does not complicate volunteers' work.
 
-### D7 — Member data isolated from the public site, archived to a private repo
-- Member data lives in MySQL only. A nightly `mysqldump` is committed to a **private** repository (git never rotates, unlike JetBackup's ~19-day window; offsite and free).
+### D7 — Member data isolated from the public site, archived encrypted and on-host
+- Member data lives in MySQL only. A nightly `mysqldump` is **encrypted (age/gpg) before it is written** and kept on the host alongside JetBackup — it is **not** committed to any git repository.
 - The public render path (Phase 1a) has no access to the members table; no member personal data is ever written to the public repo or rendered to the docroot.
-- **Why:** JetBackup is disaster recovery, not a 7-year archive; and an internet-facing member store is a higher risk class than the Sheet — isolation plus minimisation are the mitigations.
+- **Why (revised after threat-model, Area B):** the original plan committed the dump to a private git repo. That puts the whole register in plaintext git history — replicated to every clone, effectively undeletable, and it **defeats the 7-year purge** (a member removed from MySQL survives in old dumps forever, breaching the retention *ceiling*). One misconfigured repo or a stolen laptop with a clone would leak the full register. Encrypting and keeping the dump on-host removes the undeletable-history and purge-defeat problems while still protecting confidentiality; JetBackup provides the offsite disaster-recovery copy.
+- **Trade-off:** loses git's rotation-proof offsite history; JetBackup (DR) plus the manual encrypted register export (D5) cover the archival need.
 
 ### D8 — Consent capture
 - Each member record carries a reference/flag recording that signed written consent to join is held (with date/where). Migration records consent as already held for existing members; new members capture it at creation.
@@ -79,7 +80,7 @@ The register is governed by NZKF's constitution (Incorporated Societies Act 2022
 5. Build the December financial cycle (mark financial, per-club totals).
 6. Implement cessation reduction and the 7-year purge in dry-run, then live.
 7. Build the register export; verify the secretary/treasurer can produce it unaided.
-8. Set up the nightly private-repo dump; verify it never reaches the public repo/site.
+8. Set up the nightly encrypted on-host dump (age/gpg, not git-committed); verify member data never reaches the public repo/site.
 9. Retire the Sheet as system of record after a full December cycle or committee sign-off.
 
 **Rollback:** member features can be disabled without affecting the public site or Phase 1a committee editing; the Sheet remains the fallback until step 9.

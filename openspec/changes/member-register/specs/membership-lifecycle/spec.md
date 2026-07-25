@@ -40,6 +40,20 @@ When a member ceases, the system SHALL record the cessation date and reduce the 
 - **WHEN** a previously ceased member rejoins
 - **THEN** they are re-admitted as a new/returning member and are responsible for re-supplying their details and grades, which were not retained
 
+### Requirement: Cessation is an attributable recorded event
+Because cessation is a statutory event and triggers destructive reduction of the record, the system SHALL record who recorded the cessation, the reason category (resignation, death, or Committee resolution), and the date, before the record is reduced. This attribution SHALL be retained with the former-member record until the seven-year purge.
+
+#### Scenario: Ceasing a member captures who and why
+- **WHEN** a committee member records a cessation
+- **THEN** the system stores the actor, the reason category, and the cessation date, and only then reduces the record to name and cessation date
+
+### Requirement: Sensitive member actions are logged
+The system SHALL keep an attributable log of sensitive member-data actions — marking a member financial, recording a cessation, and exporting the register — recording the actor and time. The log SHALL NOT itself store the personal fields the action concerns beyond what is needed to identify the record.
+
+#### Scenario: Register export is attributable
+- **WHEN** the register is exported
+- **THEN** the system records which account exported it and when, so a later question about who accessed the full register can be answered
+
 ### Requirement: Seven-year retention purge
 The system SHALL automatically delete a former-member record once more than seven years have passed since its cessation date. The purge SHALL key on the explicit cessation date and SHALL NOT affect current or rejoined members.
 
@@ -58,12 +72,20 @@ The system SHALL let the NZKF secretary or treasurer export, without developer i
 - **WHEN** the NZKF secretary triggers the register export
 - **THEN** the system produces the current statutory register plus the seven-year former-member record in a downloadable file, with no SSH, mysqldump, or developer help required
 
-### Requirement: Member data archival separate from public content
-Member data SHALL be stored in MySQL with a scheduled dump committed to a private repository. Member data SHALL NOT be written to the public content repository nor rendered into any public page.
+#### Scenario: Export is delivered as an authenticated download, not a public file
+- **WHEN** the register export is generated
+- **THEN** it is streamed to the requester over their authenticated session and is never written to the public docroot or any path reachable without authorization
 
-#### Scenario: Nightly private archive
+### Requirement: Member data archival separate from public content
+Member data SHALL be stored in MySQL with a scheduled dump that is encrypted before it is written and kept on the host (alongside the host's own backup facility). The dump SHALL NOT be committed to any git repository — so that no plaintext copy of the register accumulates in version history that would replicate to every clone and survive the seven-year purge. Member data SHALL NOT be written to the public content repository nor rendered into any public page.
+
+#### Scenario: Nightly archive is encrypted and off-git
 - **WHEN** the scheduled archive runs
-- **THEN** the current member data is dumped to a private repository that is never published
+- **THEN** the current member data is dumped, encrypted at rest, and retained on the host, and is never committed to a git repository
+
+#### Scenario: Purged member does not survive in the archive trail
+- **WHEN** a former-member record is deleted by the seven-year purge
+- **THEN** no undeletable plaintext copy of that record persists in git history, because the archive is not git-committed
 
 #### Scenario: Member data never reaches the public site
 - **WHEN** the public site is rendered

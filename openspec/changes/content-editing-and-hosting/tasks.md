@@ -37,8 +37,25 @@
 - [ ] 5.3 Point public kyudo.nz at the MyHost-served static output; verify `.htaccess` rewrites and Fathom analytics
 - [ ] 5.4 Retire Netlify for the public site
 
-## 6. Go-live & handover
+## 6. Security hardening (threaded from the threat model)
 
-- [ ] 6.1 Create the ~15 committee accounts and assign roles
-- [ ] 6.2 Verify each club committee can edit only their own club page; NZKF committee can edit any
-- [ ] 6.3 Write a short non-technical admin guide (assign roles, edit a club page, deploy)
+- [ ] 6.1 Tier session lifetime: ~1 year for club committee, ~30 days for NZKF committee (shorter governs when both are held)
+- [ ] 6.2 Session cookies HttpOnly/Secure/SameSite; rotate session id on login; server-side session state
+- [ ] 6.3 Revoke a user's active sessions when their committee role is removed
+- [ ] 6.4 Magic-link tokens: high entropy, single-use, short expiry, never logged, not leaked via Referer; constant-path handling for known vs unknown addresses
+- [ ] 6.5 Rate-limit the magic-link request endpoint
+- [ ] 6.6 Route all data access through a single server-side authorization choke-point (IDOR); enforce scope on every request, not in the UI
+- [ ] 6.7 Prose rendered as sanitised Markdown, output-encoded, never raw HTML (stored XSS)
+- [ ] 6.8 Edit-form handler accepts only an allow-list of writable fields (mass assignment); CSRF protection on state-changing POSTs
+- [ ] 6.9 Render target paths are system-derived from a fixed page allow-list; a save can never write outside the docroot or to a user-influenced path
+- [ ] 6.10 Parameterised queries everywhere (no string-built SQL)
+- [ ] 6.11 Secrets (DB creds, email API key, session secret) outside docroot, `.env` gitignored, never in the code+content repo
+- [ ] 6.12 Enable cPanel ModSecurity and 2FA on the cPanel panel itself
+- [ ] 6.13 (Optional, host-dependent) Region-fence the app to NZ/AU/JP source IPs with an admin override; never applied to the public site
+- [ ] 6.14 Establish who patches PHP (MultiPHP) when Prae is away
+
+## 7. Go-live & handover
+
+- [ ] 7.1 Create the ~15 committee accounts and assign roles
+- [ ] 7.2 Verify each club committee can edit only their own club page; NZKF committee can edit any
+- [ ] 7.3 Write a short non-technical admin guide (assign roles, edit a club page, deploy)

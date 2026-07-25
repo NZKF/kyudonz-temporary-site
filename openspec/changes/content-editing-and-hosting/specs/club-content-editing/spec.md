@@ -29,6 +29,20 @@ On save, the system SHALL render the affected public page(s) to static HTML file
 - **WHEN** the editing application is unavailable
 - **THEN** the already-rendered public pages continue to be served by Apache
 
+### Requirement: Render targets are system-derived, never user-controlled
+The docroot file path each render writes to SHALL be derived by the system from a fixed allow-list of known pages, never from user-supplied input (club slug, page name, or field value). A save SHALL only ever overwrite the intended page's file and SHALL NOT be able to write outside the docroot or to an arbitrary path.
+
+#### Scenario: Edited content cannot redirect the write target
+- **WHEN** a committee member saves an edit whose field values contain path characters or traversal sequences
+- **THEN** the system writes only to the fixed, system-derived file for that page and never to a path influenced by the submitted content
+
+### Requirement: Edit forms accept only allow-listed fields
+The edit form handler SHALL accept only an explicit allow-list of writable fields for the page being edited, ignoring any other submitted parameters, so that a crafted request cannot set fields the form does not expose (mass assignment). State-changing saves SHALL be protected against cross-site request forgery.
+
+#### Scenario: Unexposed field cannot be set via a crafted request
+- **WHEN** a request includes parameters beyond the fields the form exposes
+- **THEN** the system ignores the extra parameters and persists only the allow-listed fields
+
 ### Requirement: Content changes are archived in git
 Rendered content and its source data SHALL be committed to a git repository so that any change can be rolled back and attributed.
 

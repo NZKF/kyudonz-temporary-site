@@ -33,10 +33,12 @@ The app writes structured data and, on save, renders the affected public pages t
 - **Why over "Eleventy on Netlify + separate PHP app":** three systems (Eleventy, Netlify, PHP) + a GitHub token that expires + a webhook, all for a non-technical successor to understand. With no Node on the host, Eleventy would run off-host, splitting the stack. 8 pages and 4 club blocks is a `render()` function, not a framework.
 - **Trade-off:** gives up Eleventy (which Prae knows) for ~100 lines of PHP templating. Accepted for single-host simplicity and successor-recoverability.
 
-### D2 — Passwordless magic-link auth, 1-year sessions
-Login = enter email → receive a one-time link → click → session cookie valid ~1 year.
+### D2 — Passwordless magic-link auth, sessions tiered by blast radius
+Login = enter email → receive a one-time link → click → session cookie. Lifetime is tiered (threat-model Area A): **~1 year for club committee**, **~30 days for NZKF committee**; where a person holds both, the shorter lifetime governs.
 - **Why over SSO (Google/Apple/Microsoft):** SSO was only ever proposed to fix password-forgetting. Magic links delete the password entirely. SSO adds provider app registrations, Apple Developer Program cost (US$99/yr), and — critically — Apple "Hide My Email" and provider-switching break the ability to match a login to a member record. The email *is* the identity, which matches the requirement that the member chooses which email is their account.
-- **Why 1-year sessions:** someone logging in 3–4×/year effectively logs in ~once/year.
+- **Why tiered sessions:** a club-committee login (own club page only) has a small blast radius, so ~1 year suits someone logging in 3–4×/year. An NZKF-committee session grants federation-wide read of all member PII and edit of every page — email-only auth plus a year-long cookie is too generous for that, so NZKF sessions expire in ~30 days.
+- **Region fence (optional, host-dependent):** where MyHost supports source-IP geolocation, the app (not the public site) restricts logins to NZ/AU/JP with an admin override — defence-in-depth against opportunistic/bot login attempts, not a primary control (a VPN defeats it, and it can lock out a travelling officer).
+- **Session hygiene:** HttpOnly/Secure/SameSite cookies, id rotated on login, server-side session state so a session can be revoked when a role is removed.
 - **Risk → mitigation:** magic-link **deliverability** to Gmail from shared hosting is the main failure mode → use cPanel Email Deliverability (SPF/DKIM green) and/or a transactional email service free tier; volume is ~260 sends/year.
 
 ### D3 — Three roles, scoped by data ownership

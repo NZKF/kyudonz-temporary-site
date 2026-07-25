@@ -1,12 +1,11 @@
-# NZKF site — threat model (scaffold / work in progress)
+# NZKF site — threat model
 
-> Status: **scaffold**, captured at the end of an explore session so a fresh
-> session can continue without losing reasoning. The full STRIDE walk-through
-> has NOT been done yet. This lists scope, the data flows to walk, and the six
-> threat areas already identified (with the open decisions). Next step: walk
-> each data flow, run STRIDE-lite, and thread resulting requirements into the
-> `content-editing-and-hosting` (1a) and `member-register` (1b) specs, plus a
-> security checklist in each change's tasks.md.
+> Status: **walk-through complete** (2026-07-25). The STRIDE-lite walk across all
+> eight data flows has been done; the two design forks (A, B) are resolved; and
+> the resulting requirements are threaded into the `content-editing-and-hosting`
+> (1a) and `member-register` (1b) specs, plus a "Security hardening" section in
+> each change's tasks.md. This file now records the model and the decisions.
+> Scope confirmed: **1a + 1b together**. See "Walk-through outcomes" below.
 
 ## Scope
 
@@ -53,7 +52,12 @@ Every account gets magic-link + 1-year session. But NZKF committee can read all
 generous for that blast radius.
 Options: shorter sessions for NZKF committee · step-up re-auth for sensitive
 actions (register export, full-member view) · accept for ~15 trusted people.
-→ Decision pending. Affects `authentication` spec in 1a.
+→ **RESOLVED (2026-07-25): shorter NZKF-committee sessions.** ~1 year for club
+committee, ~30 days for NZKF committee (shorter governs when both are held).
+Plus an *optional*, host-dependent region-fence on the app (not the public site)
+to NZ/AU/JP source IPs with an admin override — defence-in-depth, not a primary
+control. Threaded into the `authentication` spec (tiered lifetime, session
+integrity/revocation, region-restricted access) and design D2.
 
 ### B. Private PII dump is a new exfil surface — REOPENS 1b design D7
 Nightly mysqldump → private git repo puts the whole register in plaintext git
@@ -62,7 +66,13 @@ history: replicated to every clone, effectively undeletable, and it DEFEATS the
 stolen laptop = full register leak.
 Options: encrypt dump before commit (age/gpg) · keep dump on MyHost only, not
 GitHub · drop the git dump, rely on JetBackup + manual encrypted export.
-→ Decision pending. Affects `membership-lifecycle` spec + design D7 in 1b.
+→ **RESOLVED (2026-07-25): encrypted, on-host only.** Nightly dump is age/gpg
+encrypted and kept on the host alongside JetBackup, **not** committed to any git
+repo — this avoids the undeletable-plaintext-history problem *and* the
+purge-defeat (encrypting a git-committed dump would fix confidentiality but still
+retain purged members in history forever). Threaded into the
+`membership-lifecycle` spec (archival requirement) and design D7; proposal +
+migration plan references updated.
 
 ### C. Broken access control / IDOR — MOST LIKELY TO BITE (OWASP #1)
 Invisible in a demo; fails when someone changes an ID in a URL. Solo-dev failure
@@ -105,8 +115,36 @@ Without it: email-bomb a victim; enumerate accounts by timing. Cheap; easy to fo
 - [ ] PII dump strategy resolved (area B) and, if kept, encrypted
 - [ ] Register export access-controlled to secretary/treasurer only
 
-## Open decisions to resolve next session
+## Walk-through outcomes (2026-07-25)
 
-1. **A** — privilege tiering for NZKF committee (session length / step-up / accept).
-2. **B** — PII dump strategy (encrypt / on-host-only / drop).
-3. Scope confirm: 1a + 1b together (recommended).
+Scope confirmed: **1a + 1b together**. Both design forks resolved (A, B — see above).
+STRIDE-lite covered all eight data flows; areas A–F mapped to flows and, beyond
+the original cross-cutting checklist, the walk surfaced six new requirements now
+threaded into the specs:
+
+1. **Render targets are system-derived** from a fixed page allow-list — a save can
+   never write outside the docroot / to a user-influenced path (Flow 2, arbitrary
+   write). → `club-content-editing`.
+2. **Edit forms accept only allow-listed fields** + CSRF on state-changing saves
+   (Flow 2/3, mass assignment). → `club-content-editing`, `authorization` (1b).
+3. **Single server-side authorization choke-point** for member access; scope +
+   field visibility enforced per request, never in the UI (Flow 3, IDOR / OWASP #1).
+   → `authorization` (1b).
+4. **Register export streamed as an authenticated download**, never written to a
+   public path (Flow 7). → `membership-lifecycle`.
+5. **Cessation is an attributable event** (actor + reason category + date) recorded
+   before the record is reduced (Flow 5, statutory / repudiation). →
+   `membership-lifecycle`.
+6. **Sensitive member actions logged** (mark-financial, cessation, export) with
+   actor + time (Flows 4/5/7, repudiation). → `membership-lifecycle`.
+
+The cross-cutting checklist above is threaded into each change's tasks.md as a
+"Security hardening" section (1a §6, 1b §7).
+
+### Still open / to confirm during implementation
+
+- Whether to add step-up re-auth on register export **in addition** to shorter
+  NZKF sessions (deferred; shorter sessions chosen as the primary control).
+- Region-fence is contingent on MyHost supporting source-IP geolocation
+  (`mod_maxminddb`/`mod_geoip`) — verify host capability before relying on it.
+- Deliverability proof (D2) before Phase 1b relies on email for member flows.
